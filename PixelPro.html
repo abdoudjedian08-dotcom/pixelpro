@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>بكسل برو — تصميم وصناعة المواقع</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Cairo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue-deep:#152C46;
+    --blue-mid:#1E3E5F;
+    --blue-light:#2C5478;
+    --cyan-line: rgba(122,178,224,0.35);
+    --cyan-line-strong: rgba(122,178,224,0.6);
+    --paper:#F3F1E9;
+    --ink:#13202E;
+    --rust:#E07A45;
+    --rust-dark:#B85A2C;
+    --muted:#A9BCCF;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Cairo', sans-serif;
+    overflow-x:hidden;
+  }
+  h1,h2,h3{font-family:'IBM Plex Sans Arabic', sans-serif;}
+  .label{
+    font-family:'IBM Plex Mono', monospace;
+    direction:ltr;
+    display:inline-block;
+    font-size:12px;
+    letter-spacing:1px;
+  }
+  .wrap{max-width:1140px;margin:0 auto;padding:0 28px;}
+
+  /* ===== blueprint grid background ===== */
+  .blueprint{
+    background-color:var(--blue-deep);
+    background-image:
+      linear-gradient(var(--cyan-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--cyan-line) 1px, transparent 1px);
+    background-size:36px 36px;
+    color:var(--paper);
+    position:relative;
+  }
+  .blueprint::before{
+    content:"";
+    position:absolute; inset:0;
+    background-image:
+      linear-gradient(var(--cyan-line-strong) 1px, transparent 1px),
+      linear-gradient(90deg, var(--cyan-line-strong) 1px, transparent 1px);
+    background-size:180px 180px;
+    pointer-events:none;
+    opacity:0.5;
+  }
+
+  /* corner crop marks */
+  .crop{position:absolute;width:18px;height:18px;border:1.5px solid var(--cyan-line-strong);pointer-events:none;}
+  .crop.tl{top:18px;left:18px;border-right:none;border-bottom:none;}
+  .crop.tr{top:18px;right:18px;border-left:none;border-bottom:none;}
+  .crop.bl{bottom:18px;left:18px;border-right:none;border-top:none;}
+  .crop.br{bottom:18px;right:18px;border-left:none;border-top:none;}
+
+  /* ===== header ===== */
+  header{
+    position:sticky; top:0; z-index:50;
+    background:var(--blue-deep);
+    border-bottom:1px solid rgba(122,178,224,0.25);
+  }
+  .navbar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 28px; max-width:1140px; margin:0 auto;
+  }
+  .logo{
+    color:var(--paper); font-weight:700; font-size:19px; display:flex; align-items:center; gap:8px;
+  }
+  .logo .dot{width:8px;height:8px;background:var(--rust);display:inline-block;border-radius:1px;}
+  nav ul{display:flex; gap:30px; list-style:none;}
+  nav a{color:var(--muted); text-decoration:none; font-size:14px; transition:color .2s;}
+  nav a:hover{color:var(--paper);}
+  .cta-btn{
+    background:var(--rust); color:#26110a; font-weight:600; font-size:14px;
+    padding:10px 22px; border-radius:3px; text-decoration:none; border:1px solid var(--rust-dark);
+    transition:transform .15s, background .15s;
+  }
+  .cta-btn:hover{background:#F0935F; transform:translateY(-1px);}
+  .nav-toggle{display:none;background:none;border:none;color:var(--paper);font-size:24px;cursor:pointer;}
+
+  /* ===== hero / blueprint drawing ===== */
+  .hero{
+    padding:90px 0 70px;
+    overflow:hidden;
+  }
+  .hero-inner{
+    display:grid; grid-template-columns:1fr 1fr; gap:50px; align-items:center;
+    max-width:1140px; margin:0 auto; padding:0 28px; position:relative;
+  }
+  .hero-eyebrow{color:var(--rust); margin-bottom:14px;}
+  .hero h1{
+    font-size:42px; line-height:1.35; font-weight:700; color:var(--paper); margin-bottom:18px;
+  }
+  .hero h1 span{color:var(--rust);}
+  .hero p{color:var(--muted); font-size:16px; line-height:1.8; margin-bottom:30px; max-width:480px;}
+  .hero-actions{display:flex; gap:14px;}
+  .ghost-btn{
+    border:1px solid var(--cyan-line-strong); color:var(--paper); text-decoration:none;
+    padding:10px 22px; border-radius:3px; font-size:14px; font-weight:600;
+    transition:border-color .2s, background .2s;
+  }
+  .ghost-btn:hover{border-color:var(--paper); background:rgba(255,255,255,0.05);}
+
+  /* technical drawing of a browser window */
+  .drawing{position:relative; height:380px;}
+  .browser{
+    position:absolute; top:0; right:0; width:100%; max-width:420px;
+    border:1.5px solid var(--cyan-line-strong); border-radius:4px; background:rgba(255,255,255,0.02);
+  }
+  .browser-bar{
+    display:flex; gap:6px; align-items:center; padding:10px 14px; border-bottom:1px solid var(--cyan-line);
+  }
+  .browser-bar span{width:8px;height:8px;border-radius:50%;border:1px solid var(--cyan-line-strong);}
+  .browser-body{padding:20px 18px; display:flex; flex-direction:column; gap:10px;}
+  .bb-line{height:8px; background:rgba(122,178,224,0.18); border:1px solid var(--cyan-line); border-radius:2px;}
+  .bb-line.w60{width:60%;} .bb-line.w90{width:90%;} .bb-line.w40{width:40%;}
+  .bb-block{height:64px; border:1px dashed var(--cyan-line-strong); border-radius:2px; margin-top:6px; position:relative;}
+  .bb-block .label{position:absolute; bottom:4px; left:6px; color:var(--muted); font-size:10px;}
+  .dim-line{position:absolute; border-top:1px solid var(--cyan-line-strong);}
+  .dim-label{position:absolute; color:var(--muted); white-space:nowrap;}
+
+  /* ===== section heading pattern ===== */
+  .section{padding:90px 0;}
+  .section-head{margin-bottom:50px; max-width:560px;}
+  .section-head .label{color:var(--rust-dark); margin-bottom:10px;}
+  .section-head h2{font-size:30px; font-weight:700; color:var(--ink); line-height:1.4;}
+  .on-dark .section-head h2{color:var(--paper);}
+  .on-dark .section-head .label{color:var(--rust);}
+
+  /* ===== services ===== */
+  .services-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:rgba(20,32,46,0.15); border:1px solid rgba(20,32,46,0.15);}
+  .service-card{
+    background:var(--paper); padding:30px 22px; position:relative;
+  }
+  .service-card .num{font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--rust-dark); direction:ltr;}
+  .service-card h3{font-size:17px; margin:14px 0 10px; font-weight:600;}
+  .service-card p{font-size:13.5px; color:#56657A; line-height:1.7;}
+
+  /* ===== portfolio ===== */
+  .port-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:22px;}
+  .port-card{
+    border:1px solid rgba(20,32,46,0.15); border-radius:4px; overflow:hidden; background:#fff;
+  }
+  .port-thumb{
+    height:150px; background:var(--blue-deep);
+    background-image:linear-gradient(var(--cyan-line) 1px, transparent 1px), linear-gradient(90deg, var(--cyan-line) 1px, transparent 1px);
+    background-size:20px 20px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .port-thumb .tag{
+    font-family:'IBM Plex Mono',monospace; direction:ltr; font-size:11px; color:var(--muted);
+    border:1px solid var(--cyan-line-strong); padding:4px 10px; border-radius:2px;
+  }
+  .port-body{padding:18px 20px;}
+  .port-body .cat{color:var(--rust-dark); font-size:12px; font-weight:600; margin-bottom:6px;}
+  .port-body h3{font-size:16px; font-weight:600; margin-bottom:6px;}
+  .port-body p{font-size:13px; color:#56657A;}
+
+  /* ===== process (real sequence -> numbered ok) ===== */
+  .process-row{display:flex; gap:0; position:relative;}
+  .process-step{flex:1; position:relative; padding:0 18px 0 0;}
+  .process-step:not(:last-child)::after{
+    content:""; position:absolute; top:10px; right:-10px; left:auto;
+    width:20px; height:1px; background:var(--cyan-line-strong);
+  }
+  .process-step .num{
+    font-family:'IBM Plex Mono',monospace; direction:ltr; color:var(--rust); font-size:13px; margin-bottom:10px; display:block;
+  }
+  .process-step h3{color:var(--paper); font-size:15.5px; margin-bottom:8px; font-weight:600;}
+  .process-step p{color:var(--muted); font-size:13px; line-height:1.7;}
+
+  /* ===== testimonials + pricing ===== */
+  .split{display:grid; grid-template-columns:1fr 1fr; gap:60px;}
+  .quote-card{border-right:2px solid var(--rust); padding-right:18px; margin-bottom:26px;}
+  .quote-card p{font-size:14.5px; line-height:1.8; color:#33424F; margin-bottom:10px;}
+  .quote-card .who{font-size:12.5px; color:#7A8898; font-weight:600;}
+
+  .price-card{
+    border:1px solid rgba(20,32,46,0.15); border-radius:4px; padding:22px; margin-bottom:16px; background:#fff;
+    display:flex; justify-content:space-between; align-items:center;
+  }
+  .price-card.featured{border:2px solid var(--rust);}
+  .price-card .ptitle{font-weight:600; font-size:15px; margin-bottom:4px;}
+  .price-card .pdesc{font-size:12.5px; color:#7A8898;}
+  .price-card .pvalue{font-family:'IBM Plex Mono',monospace; direction:ltr; font-size:14px; color:var(--rust-dark);}
+
+  /* ===== contact / footer ===== */
+  .contact-box{
+    display:flex; justify-content:space-between; align-items:center; gap:30px;
+    border:1px solid var(--cyan-line-strong); border-radius:4px; padding:40px; position:relative;
+  }
+  .contact-box h2{color:var(--paper); font-size:24px; margin-bottom:8px;}
+  .contact-box p{color:var(--muted); font-size:14px;}
+  .contact-actions{display:flex; gap:12px; flex-shrink:0;}
+
+  footer{padding:30px 0; border-top:1px solid rgba(122,178,224,0.25);}
+  .footer-inner{display:flex; justify-content:space-between; align-items:center; color:var(--muted); font-size:12.5px;}
+
+  @media (max-width:860px){
+    .hero-inner{grid-template-columns:1fr;}
+    .drawing{height:260px; margin-top:20px;}
+    .services-grid{grid-template-columns:repeat(2,1fr);}
+    .port-grid{grid-template-columns:1fr;}
+    .process-row{flex-direction:column; gap:24px;}
+    .process-step::after{display:none;}
+    .split{grid-template-columns:1fr;}
+    nav ul{display:none;}
+    .nav-toggle{display:block;}
+    .contact-box{flex-direction:column; text-align:center;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="navbar">
+    <div class="logo"><span class="dot"></span> بكسل برو</div>
+    <nav><ul>
+      <li><a href="#home">الرئيسية</a></li>
+      <li><a href="#services">الخدمات</a></li>
+      <li><a href="#process">آلية العمل</a></li>
+      <li><a href="#pricing">الأسعار</a></li>
+    </ul></nav>
+    <a href="#contact" class="cta-btn">طلب عرض سعر</a>
+  </div>
+</header>
+
+<section class="hero blueprint" id="home">
+  <span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+  <div class="hero-inner">
+    <div>
+      <span class="label hero-eyebrow">WEB-STUDIO / EST. 2024</span>
+      <h1>نبني مواقع بدقة <span>المخطط الهندسي</span>، لا بالتخمين</h1>
+      <p>نصمم ونطور مواقع تجارية وشخصية ومتاجر إلكترونية، بمنهجية واضحة من أول خط إلى آخر بكسل، تنتهي بموقع جاهز يحقق نتائج حقيقية لعملك.</p>
+      <div class="hero-actions">
+        <a href="#contact" class="cta-btn">احجز استشارة مجانية</a>
+      </div>
+    </div>
+    <div class="drawing">
+      <div class="browser">
+        <div class="browser-bar">
+          <span></span><span></span><span></span>
+          <span class="label" style="margin-right:auto;color:var(--muted);">yoursite.com</span>
+        </div>
+        <div class="browser-body">
+          <div class="bb-line w40"></div>
+          <div class="bb-line w90"></div>
+          <div class="bb-line w60"></div>
+          <div class="bb-block"><span class="label">HERO — 100% × 380px</span></div>
+          <div style="display:flex;gap:8px;">
+            <div class="bb-block" style="flex:1;height:40px;"></div>
+            <div class="bb-block" style="flex:1;height:40px;"></div>
+            <div class="bb-block" style="flex:1;height:40px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="services">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="label">SERVICES / 04</span>
+      <h2>خدمات مبنية على مقاسات احتياجك بالضبط</h2>
+    </div>
+    <div class="services-grid">
+      <div class="service-card">
+        <span class="num">01</span>
+        <h3>موقع تعريفي</h3>
+        <p>صفحة واحدة قوية تعرض هويتك ومنتجاتك للأفراد والمشاريع الناشئة.</p>
+      </div>
+      <div class="service-card">
+        <span class="num">02</span>
+        <h3>متجر إلكتروني</h3>
+        <p>متجر متكامل مع نظام دفع وشحن وإدارة مخزون يدير مبيعاتك بسلاسة.</p>
+      </div>
+      <div class="service-card">
+        <span class="num">03</span>
+        <h3>موقع شركة</h3>
+        <p>منصة متعددة الصفحات تليق بحجم شركتك وتعكس مصداقيتها.</p>
+      </div>
+      <div class="service-card">
+        <span class="num">04</span>
+        <h3>صيانة ودعم</h3>
+        <p>متابعة شهرية، تحديثات أمنية، وتحسينات مستمرة بعد الإطلاق.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section blueprint on-dark" id="process">
+  <span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+  <div class="wrap">
+    <div class="section-head">
+      <span class="label">PROCESS / 4 STEPS</span>
+      <h2>آلية عمل واضحة من الفكرة إلى الإطلاق</h2>
+    </div>
+    <div class="process-row">
+      <div class="process-step">
+        <span class="num">01</span>
+        <h3>الاستكشاف</h3>
+        <p>نفهم نشاطك وجمهورك وأهدافك قبل أي خط تصميم.</p>
+      </div>
+      <div class="process-step">
+        <span class="num">02</span>
+        <h3>التصميم</h3>
+        <p>نضع المخطط والهوية البصرية ونعرضها عليك للمراجعة.</p>
+      </div>
+      <div class="process-step">
+        <span class="num">03</span>
+        <h3>البناء</h3>
+        <p>نطور الموقع فعليًا ونختبره على جميع الأجهزة.</p>
+      </div>
+      <div class="process-step">
+        <span class="num">04</span>
+        <h3>الإطلاق</h3>
+        <p>ننشر الموقع ونقدم دعمًا لما بعد الإطلاق.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="pricing">
+  <div class="wrap split">
+    <div>
+      <div class="section-head">
+        <span class="label">TESTIMONIALS</span>
+        <h2>ماذا يقول من عملوا معنا</h2>
+      </div>
+      <div class="quote-card">
+        <p>تعامل محترف من أول يوم، والموقع جاهز بمدة أقل من المتوقع وبجودة عالية.</p>
+        <p class="who">— صاحب متجر إلكتروني</p>
+      </div>
+      <div class="quote-card">
+        <p>فهموا احتياجات شركتنا بسرعة وقدموا تصميمًا يعكس مصداقيتنا أمام عملائنا.</p>
+        <p class="who">— مدير شركة استشارات</p>
+      </div>
+    </div>
+    <div>
+      <div class="section-head">
+        <span class="label">PRICING</span>
+        <h2>باقات تناسب حجم مشروعك</h2>
+      </div>
+      <div class="price-card">
+        <div><p class="ptitle">أساسي</p><p class="pdesc">موقع تعريفي بصفحة واحدة</p></div>
+        <span class="pvalue">ابتداءً من 35,000 دج</span>
+      </div>
+      <div class="price-card featured">
+        <div><p class="ptitle">مميز</p><p class="pdesc">موقع متعدد الصفحات أو متجر صغير</p></div>
+        <span class="pvalue">ابتداءً من 80,000 دج</span>
+      </div>
+      <div class="price-card">
+        <div><p class="ptitle">مخصص</p><p class="pdesc">مشروع كامل حسب احتياجك</p></div>
+        <span class="pvalue">سعر مخصص حسب الطلب</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section blueprint on-dark" id="contact">
+  <span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+  <div class="wrap">
+    <div class="contact-box">
+      <div>
+        <h2>جاهز تبدأ موقعك القادم؟</h2>
+        <p>أرسل لنا تفاصيل مشروعك، ونرد عليك خلال 24 ساعة بخطة وسعر تقريبي.</p>
+      </div>
+      <div class="contact-actions">
+        <a href="https://wa.me/213661819146" target="_blank" rel="noopener" class="cta-btn">تواصل عبر واتساب</a>
+        <a href="#" class="ghost-btn">إرسال نموذج</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="blueprint">
+  <div class="wrap footer-inner">
+    <span>© 2026 بكسل برو — جميع الحقوق محفوظة</span>
+    <span class="label">BUILT WITH PRECISION</span>
+  </div>
+</footer>
+
+</body>
+</html>
